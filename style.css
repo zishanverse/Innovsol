@@ -1,0 +1,548 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Syne:wght@400..800&family=Unbounded:wght@200..900&display=swap');
+
+body {
+    font-family: "Syne";
+}
+
+:root {
+  --card-height: 40vw;
+  --card-margin: 4vw;
+  --card-top-offset: 2em;
+  --numcards: 4;
+  --outline-width: 0px;
+}
+
+#cards {
+  padding-bottom: calc(
+    var(--numcards) * var(--card-top-offset)
+  ); /* Make place at bottom, as items will slide to that position*/
+  margin-bottom: var(
+    --card-margin
+  ); /* Don't include the --card-margin in padding, as that will affect the scroll-timeline*/
+}
+
+#card_1 {
+  --index: 1;
+}
+
+#card_2 {
+  --index: 2;
+}
+
+#card_3 {
+  --index: 3;
+}
+
+#card_4 {
+  --index: 4;
+}
+
+.card {
+  position: sticky;
+  top: 0;
+  padding-top: calc(var(--index) * var(--card-top-offset));
+}
+
+@supports (animation-timeline: works) {
+  @scroll-timeline cards-element-scrolls-in-body {
+    source: selector(body);
+    scroll-offsets:
+			/* Start when the start edge touches the top of the scrollport */ selector(
+          #sec3
+        )
+        start 1,
+      /* End when the start edge touches the start of the scrollport */
+        selector(#sec3) start 0;
+    start: selector(#sec3) start 1; /* Start when the start edge touches the top of the scrollport */
+    end: selector(#sec3) start 0; /* End when the start edge touches the start of the scrollport */
+    time-range: 4s;
+  }
+
+  .card {
+    --index0: calc(var(--index) - 1); /* 0-based index */
+    --reverse-index: calc(var(--numcards) - var(--index0)); /* reverse index */
+    --reverse-index0: calc(
+      var(--reverse-index) - 1
+    ); /* 0-based reverse index */
+  }
+
+  .card__content {
+    transform-origin: 50% 0%;
+    will-change: transform;
+    
+    --duration: calc(var(--reverse-index0) * 1s);
+    --delay: calc(var(--index0) * 1s);
+
+    animation: var(--duration) linear scale var(--delay) forwards;
+    animation-timeline: cards-element-scrolls-in-body;
+  }
+
+  @keyframes scale {
+    to {
+      transform: scale(calc(1.1 - calc(0.1 * var(--reverse-index))));
+    }
+  }
+}
+
+/** DEBUG **/
+
+#debug {
+  position: fixed;
+  top: 1em;
+  left: 1em;
+}
+#debug::after {
+  content: " Show Debug";
+  margin-left: 1.5em;
+  color: white;
+  white-space: nowrap;
+}
+
+#debug:checked ~ main {
+  --outline-width: 1px;
+}
+
+/** PAGE STYLING **/
+
+* {
+  /* Poor Man's Reset */
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+header,
+main {
+  width: 80vw;
+  margin: 0 auto;
+}
+
+header {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
+#cards {
+  list-style: none;
+  outline: calc(var(--outline-width) * 10) solid blue;
+
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(var(--numcards), var(--card-height));
+  gap: var(--card-margin);
+}
+
+.card {
+  outline: var(--outline-width) solid hotpink;
+}
+
+.card__content {
+  box-shadow: 0 0.2em 1em rgba(0, 0, 0, 0.1), 0 1em 2em rgba(0, 0, 0, 0.1);
+  background: #000;
+  color: #fff;
+  border-radius: 1em;
+  overflow: hidden;
+
+  display: grid;
+  grid-template-areas: "text img";
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto;
+  height: 60vh;
+
+  outline: var(--outline-width) solid lime;
+}
+
+.card-left {
+    height: 70%;
+}
+
+span {
+    background: linear-gradient(to right, #007AFF, #5856D6, #FF2D55); /* iOS gradient colors */
+    -webkit-background-clip: text; /* Clips the background to the text */
+    -webkit-text-fill-color: transparent;
+}
+
+.card-content-count {
+    font-size: 50px; 
+    color: #87bdff;
+}
+.card-left-content-head{
+    margin-bottom: 20px;
+}
+
+.card__content > div {
+  grid-area: text;
+  width: 80%;
+  place-self: center;
+  text-align: left;
+
+  display: grid;
+  gap: 1em;
+  place-items: start;
+}
+
+.card__content > figure {
+  grid-area: img;
+  overflow: hidden;
+}
+
+.card__content > figure > img {
+  width: 100%;
+  height: 100%;
+  border-radius: 1em;
+  object-fit: cover;
+}
+
+.btn {
+  background: rgb(188 87 36);
+  color: rgb(255 255 255);
+  text-decoration: none;
+  display: inline-block;
+  padding: 0.5em;
+  border-radius: 0.25em;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.home-page {
+  padding: 40px;
+  height: max-content;
+  background-color: #ffffff80;
+  font-family: "Syne";
+}
+
+.navbar-container {
+  position: absolute;
+  top: 3%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.nav-img {
+  height: 45px;
+}
+
+.navbar {
+  width: 70%;
+  background-color: #fff;
+  border-radius: 50px;
+  display: flex;
+  padding: 10px;
+  padding-left: 30px;
+  padding-right: 30px;
+  box-shadow: 0px 0px 5px 1px grey;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navlinks {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 40%;
+}
+
+.nav-btn {
+  background-color: #000;
+  border: 0px;
+  border-radius: 20px;
+  height: 40px;
+  width: 120px;
+  color: #fff;
+}
+
+.hero {
+  background-image: url("https://res.cloudinary.com/dvhmy6a4u/image/upload/v1735899989/download_3_lla2rp.jpg");
+  background-position: 180deg;
+  height: 90vh;
+  background-size: cover;
+  border-radius: 40px;
+  display: flex;
+  gap: 100px;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 80px;
+  color: #fff;
+  font-family: "Syne";
+}
+.flex {
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+.hero-btn {
+  width: 150px;
+  height: 40px;
+  border: 0px;
+  font-size: 17px;
+  border-radius: 20px;
+  background-color: grey;
+  color: #fff;
+}
+.bg-white {
+  background-color: #fff;
+  color: #000;
+}
+
+.below-hero {
+  padding: 30px;
+  padding-left: 10%;
+  padding-right: 10%;
+}
+
+.sec2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: "Syne";
+}
+
+.sec2-left-card {
+  width: 33%;
+  background-image: url("https://res.cloudinary.com/dvhmy6a4u/image/upload/v1735901774/download_edrjgo.gif");
+  padding: 30px;
+  color: #fff;
+  border-radius: 30px;
+  height: 45vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.sec2-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.sec2-flex-head {
+    font-size: 40px;
+}
+.sec2-flex-para {
+    width: 50%;
+}
+
+.sec2-right-card {
+    width: 66%;
+    height: 45vh;
+    background-color: #000;
+    background-image: url("https://res.cloudinary.com/dvhmy6a4u/image/upload/v1735903151/Download_premium_image_of_Abstract_black_grometry_backgrounds_black_background_accessories__about_wallpaper_mobile_wallpaper_iphone_wallpaper_background_and_black_background_14117047_xnuxgp.jpg");
+    background-size: cover;
+    color: #fff;
+    padding: 30px;
+    border-radius: 30px;
+    display: flex;
+}
+
+@keyframes rotate {
+    0% {
+        rotate: 0deg;
+    }
+    100% {
+        rotate: 180deg;
+    }
+}
+.sec2-right-icon {
+    z-index: 1;
+    height: 150px;
+    animation: rotate 15s infinite;
+    
+}
+.sec2-right-card-head {
+    font-size: 35px;
+    margin-bottom: 10px;
+}
+.sec2-right-card-para {
+  width: 70%;
+}
+
+.sec3 {
+    padding-top: 10%;
+}
+
+
+
+.home-heads {
+    font-size: 35px;
+    font-family: "Syne";
+  margin-bottom: 30px;
+}
+
+.about-us-sec {
+  display: flex;
+  height: 70vh;
+  font-family: "Syne";
+  justify-content: space-between;
+}
+
+.about-us-cards-head {
+    font-size: 21px;
+    margin-bottom: 10px;
+}
+
+.about-us-sec-left {
+  width: 64%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.about-us-sec-left-top {
+  height: 48%;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.about-us-sec-left-top-cards1 {
+  width: 48%;
+  color:#fff;
+  background-image: url("https://res.cloudinary.com/dgdgrniut/image/upload/v1735907011/Download_premium_image_of_Abstract_black_grometry_spiral_night_black_background__about_mobile_wallpaper_iphone_wallpaper_background_black_background_and_space_14117120_elaxjx_zmc6y3.jpg");
+  background-size: cover;
+  height: 100%;
+  border-radius: 30px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+  position:relative;
+}
+.about-us-sec-left-top-cards1-logo {
+    height: 100px;
+    position: absolute;
+    top: 65%;
+    rotate: 45deg;
+}
+
+.about-us-sec-left-top-cards2 {
+    width: 48%;
+    color:#fff;
+    background-color: #000;
+    height: 100%;
+    border-radius: 30px;
+    position: relative;
+}
+.about--us-sec-left-top-cards2-blur {
+    backdrop-filter: blur(5px);
+    position:absolute;
+    top:0%;
+    height:100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    text-align: center;
+    border-radius: 30px;
+    padding: 30px;
+    
+}
+
+.about-us-sec-left-top-cards2-img {
+    height: 80px;
+    position : absolute;
+    top: 10%;
+    right: 10%;
+}
+
+.about-us-sec-left-bottom-card {
+  width: 100%;
+  background-image: url("https://res.cloudinary.com/dvhmy6a4u/image/upload/v1735903151/Download_premium_image_of_Abstract_black_grometry_backgrounds_black_background_accessories__about_wallpaper_mobile_wallpaper_iphone_wallpaper_background_and_black_background_14117047_xnuxgp.jpg");
+  background-size: cover;
+  color: #fff;  
+  border-radius: 30px;
+  padding: 30px;
+  height: 48%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.about-us-sec-right-card {
+    width: 33%;
+    color: #fff;
+    background-image: url("https://res.cloudinary.com/dvhmy6a4u/image/upload/v1735900722/Wallpapers_fkcfhj.jpg");
+    background-size: cover;
+    border-radius: 30px;
+    padding: 30px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+}
+.about-us-sec-right-card-top-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 50%;
+}
+
+.about-us-sec-right-card-bottom-content {
+    height: 50%;
+    padding-top: 30%;
+}
+
+.footer {
+    background-color: #000;
+    border-radius: 30px;
+    color: #fff;
+    padding: 100px;
+    font-family: "Syne";
+}
+.footer-img {
+    height: 50px;
+}
+
+
+.footer-sec1 {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+.social-medias {
+    display: flex;
+    width: 10%;
+    justify-content: space-between;
+}
+.social-icons {
+    font-size: 30px;
+    height: 50px; 
+    width: 50px; 
+}
+
+.footer-sec2 {
+    display: flex;
+    justify-content: space-between;
+}
+
+.footer-sec2-cards > h2 {
+    color: #fff;
+    margin-bottom: 40px;
+    font-size: 30px;
+}
+
+.footer-sec2-cards > p {
+    color: grey;
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+.kkrf-link{
+    text-align: center;
+    color: #fff;
+}
